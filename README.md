@@ -1,0 +1,2 @@
+<!-- run test -->
+npm run test:e2e
