@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 // src/paystack/paystack.service.ts
 import { HttpService } from '@nestjs/axios';
@@ -54,6 +57,9 @@ export class PaystackService {
     // Paystack amount is in kobo (lowest currency unit)
     const amountInKobo = amount * 100;
 
+    // The URL Paystack will redirect to after payment.
+    const callback_url = 'http://localhost:3000/paystack/callback';
+
     const headers = {
       Authorization: `Bearer ${this.paystackSecretKey}`,
       'Content-Type': 'application/json',
@@ -63,21 +69,20 @@ export class PaystackService {
       const { data } = await firstValueFrom(
         this.httpService.post<PaystackInitializeResponse>(
           url,
-          { email, amount: amountInKobo },
+          { email, amount: amountInKobo, callback_url },
           { headers },
         ),
       );
       return data;
     } catch (error) {
-      if (error instanceof AxiosError) {
+      if (error instanceof AxiosError && error.response) {
         this.logger.error(
-          `Error initializing payment: ${JSON.stringify(error.response?.data)}`, // eslint-disable-line @typescript-eslint/no-unsafe-member-access
+          `Error initializing payment: ${JSON.stringify(error.response.data)}`,
         );
-      } else {
-        const stack = error instanceof Error ? error.stack : undefined;
+      } else if (error instanceof Error) {
         this.logger.error(
           'An unexpected error occurred during payment initialization',
-          stack,
+          error.stack,
         );
       }
       throw new InternalServerErrorException('Could not initialize payment.');
@@ -96,15 +101,14 @@ export class PaystackService {
       );
       return data;
     } catch (error) {
-      if (error instanceof AxiosError) {
+      if (error instanceof AxiosError && error.response) {
         this.logger.error(
-          `Error verifying payment: ${JSON.stringify(error.response?.data)}`, // eslint-disable-line @typescript-eslint/no-unsafe-member-access
+          `Error verifying payment: ${JSON.stringify(error.response.data)}`,
         );
-      } else {
-        const stack = error instanceof Error ? error.stack : undefined;
+      } else if (error instanceof Error) {
         this.logger.error(
           'An unexpected error occurred during payment verification',
-          stack,
+          error.stack,
         );
       }
       throw new InternalServerErrorException('Could not verify payment.');
