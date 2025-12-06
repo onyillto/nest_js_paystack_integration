@@ -28,7 +28,7 @@ export interface PaystackInitializeResponse {
 export interface PaystackVerifyResponse {
   status: boolean;
   message: string;
-  data: any; // The data object for verification is large and can be typed further if needed
+  data: any;
 }
 @Injectable()
 export class PaystackService {

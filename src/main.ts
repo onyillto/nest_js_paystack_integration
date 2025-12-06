@@ -11,9 +11,9 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Paystack API Example')
     .setDescription('The Paystack API integration description')
-    .setVersion('1.0')
+    .setVersion("1.0")
     .build();
-  const document: OpenAPIObject = SwaggerModule.createDocument(app, config);
+  const document: OpenAPIObject = SwaggerModule.createDocument(app, config) as OpenAPIObject;
   SwaggerModule.setup('api', app, document);
 
   await app.listen(process.env.PORT ?? 3000);
