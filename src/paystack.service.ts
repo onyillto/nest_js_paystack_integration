@@ -3,16 +3,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 // src/paystack/paystack.service.ts
-import { HttpService } from '@nestjs/axios';
+import { HttpService } from "@nestjs/axios";
 import {
   Injectable,
   InternalServerErrorException,
   Logger,
-} from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { firstValueFrom } from 'rxjs';
-import { InitializePaymentDto } from './initialize-payment.dto';
-import { AxiosError } from 'axios';
+} from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { firstValueFrom } from "rxjs";
+import { InitializePaymentDto } from "./initialize-payment.dto";
+import { AxiosError } from "axios";
 
 // Interfaces for Paystack API responses for better type safety
 export interface PaystackInitializeResponse {
@@ -37,32 +37,32 @@ export class PaystackService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly configService: ConfigService,
+    private readonly configService: ConfigService
   ) {
-    const secretKey = this.configService.get<string>('PAYSTACK_SECRET_KEY');
+    const secretKey = this.configService.get<string>("PAYSTACK_SECRET_KEY");
     if (!secretKey) {
       throw new InternalServerErrorException(
-        'PAYSTACK_SECRET_KEY not found in environment variables.',
+        "PAYSTACK_SECRET_KEY not found in environment variables."
       );
     }
     this.paystackSecretKey = secretKey;
   }
 
   async initializePayment(
-    initializePaymentDto: InitializePaymentDto,
+    initializePaymentDto: InitializePaymentDto
   ): Promise<PaystackInitializeResponse> {
     const { email, amount } = initializePaymentDto;
-    const url = 'https://api.paystack.co/transaction/initialize';
+    const url = "https://api.paystack.co/transaction/initialize";
 
     // Paystack amount is in kobo (lowest currency unit)
     const amountInKobo = amount * 100;
 
     // The URL Paystack will redirect to after payment.
-    const callback_url = 'http://localhost:3000/paystack/callback';
+    const callback_url = "http://localhost:3000/paystack/callback";
 
     const headers = {
       Authorization: `Bearer ${this.paystackSecretKey}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     try {
@@ -70,22 +70,22 @@ export class PaystackService {
         this.httpService.post<PaystackInitializeResponse>(
           url,
           { email, amount: amountInKobo, callback_url },
-          { headers },
-        ),
+          { headers }
+        )
       );
       return data;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         this.logger.error(
-          `Error initializing payment: ${JSON.stringify(error.response.data)}`,
+          `Error initializing payment: ${JSON.stringify(error.response.data)}`
         );
       } else if (error instanceof Error) {
         this.logger.error(
-          'An unexpected error occurred during payment initialization',
+          "An unexpected error occurred during payment initialization",
           error.stack,
         );
       }
-      throw new InternalServerErrorException('Could not initialize payment.');
+      throw new InternalServerErrorException("Could not initialize payment.");
     }
   }
 
@@ -97,21 +97,21 @@ export class PaystackService {
 
     try {
       const { data } = await firstValueFrom(
-        this.httpService.get<PaystackVerifyResponse>(url, { headers }),
+        this.httpService.get<PaystackVerifyResponse>(url, { headers })
       );
       return data;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         this.logger.error(
-          `Error verifying payment: ${JSON.stringify(error.response.data)}`,
+          `Error verifying payment: ${JSON.stringify(error.response.data)}`
         );
       } else if (error instanceof Error) {
         this.logger.error(
-          'An unexpected error occurred during payment verification',
+          "An unexpected error occurred during payment verification",
           error.stack,
         );
       }
-      throw new InternalServerErrorException('Could not verify payment.');
+      throw new InternalServerErrorException("Could not verify payment.");
     }
   }
 }
