@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module'; // Import the standard AppModule
+import { AppModule } from './app.module'; 
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import type { OpenAPIObject } from '@nestjs/swagger';
-import { ValidationPipe } from '@nestjs/common'; // Import ValidationPipe
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule); // Use AppModule
-  app.useGlobalPipes(new ValidationPipe()); // Enable global validation for DTOs
+  const app = await NestFactory.create(AppModule);
+  app.useGlobalPipes(new ValidationPipe());
 
   const config = new DocumentBuilder()
     .setTitle('Paystack API Example')

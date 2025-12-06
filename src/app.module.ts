@@ -7,8 +7,8 @@ import { PaystackModule } from './paystack.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, // Makes .env variables available throughout the app
-      envFilePath: '.env', // Point to the .env file in the parent directory
+      isGlobal: true, 
+      envFilePath: '.env',
     }),
     // TypeOrmModule.forRoot({
     //   type: 'postgres',
