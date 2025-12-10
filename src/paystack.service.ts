@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 // src/paystack/paystack.service.ts
 import { HttpService } from "@nestjs/axios";
 import {
@@ -37,19 +33,19 @@ export class PaystackService {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly configService: ConfigService
+    private readonly configService: ConfigService,
   ) {
     const secretKey = this.configService.get<string>("PAYSTACK_SECRET_KEY");
     if (!secretKey) {
       throw new InternalServerErrorException(
-        "PAYSTACK_SECRET_KEY not found in environment variables."
+        "PAYSTACK_SECRET_KEY not found in environment variables.",
       );
     }
     this.paystackSecretKey = secretKey;
   }
 
   async initializePayment(
-    initializePaymentDto: InitializePaymentDto
+    initializePaymentDto: InitializePaymentDto,
   ): Promise<PaystackInitializeResponse> {
     const { email, amount } = initializePaymentDto;
     const url = "https://api.paystack.co/transaction/initialize";
@@ -70,14 +66,14 @@ export class PaystackService {
         this.httpService.post<PaystackInitializeResponse>(
           url,
           { email, amount: amountInKobo, callback_url },
-          { headers }
-        )
+          { headers },
+        ),
       );
       return data;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         this.logger.error(
-          `Error initializing payment: ${JSON.stringify(error.response.data)}`
+          `Error initializing payment: ${JSON.stringify(error.response.data)}`,
         );
       } else if (error instanceof Error) {
         this.logger.error(
@@ -97,13 +93,13 @@ export class PaystackService {
 
     try {
       const { data } = await firstValueFrom(
-        this.httpService.get<PaystackVerifyResponse>(url, { headers })
+        this.httpService.get<PaystackVerifyResponse>(url, { headers }),
       );
       return data;
     } catch (error) {
       if (error instanceof AxiosError && error.response) {
         this.logger.error(
-          `Error verifying payment: ${JSON.stringify(error.response.data)}`
+          `Error verifying payment: ${JSON.stringify(error.response.data)}`,
         );
       } else if (error instanceof Error) {
         this.logger.error(

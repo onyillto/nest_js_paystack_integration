@@ -1,14 +1,12 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
-import { PaystackModule } from './paystack.module';
+import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { PaystackModule } from "./paystack.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true, 
-      envFilePath: '.env',
+      isGlobal: true,
+      envFilePath: ".env",
     }),
     // TypeOrmModule.forRoot({
     //   type: 'postgres',
@@ -22,7 +20,7 @@ import { PaystackModule } from './paystack.module';
     // }),
     PaystackModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

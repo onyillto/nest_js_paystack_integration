@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-// src/paystack/paystack.controller.ts
 import { Controller, Post, Get, Body, Param, Query, Res } from "@nestjs/common";
 import {
   PaystackInitializeResponse,
@@ -22,7 +20,7 @@ export class PaystackController {
     description: "Payment initialized successfully.",
   })
   initializePayment(
-    @Body() initializePaymentDto: InitializePaymentDto
+    @Body() initializePaymentDto: InitializePaymentDto,
   ): Promise<PaystackInitializeResponse> {
     return this.paystackService.initializePayment(initializePaymentDto);
   }
@@ -32,7 +30,7 @@ export class PaystackController {
   @ApiParam({ name: "reference", description: "The transaction reference" })
   @ApiResponse({ status: 200, description: "Payment verification status." })
   verifyPayment(
-    @Param("reference") reference: string
+    @Param("reference") reference: string,
   ): Promise<PaystackVerifyResponse> {
     return this.paystackService.verifyPayment(reference);
   }
@@ -47,7 +45,7 @@ export class PaystackController {
   })
   async handleCallback(
     @Query("reference") reference: string,
-    @Res() res: Response
+    @Res() res: Response,
   ): Promise<void> {
     const verification = await this.paystackService.verifyPayment(reference);
 
